@@ -1,5 +1,8 @@
 // remove to disable music, useful when building for hardware without an SB16
-#define ENABLE_MUSIC
+//#define ENABLE_MUSIC
+
+#include <array>
+#include <cstdint>
 
 #include "util.h"
 #include "screen.h"
@@ -18,18 +21,17 @@
 #include "music.h"
 #endif
 
-#define FPS 30
-#define LEVELS 30
+constexpr auto FPS = 30;
+constexpr auto LEVELS = 30;
 
-#define TILE_SIZE 10
+constexpr auto TILE_SIZE = 10;
 
-#define LOGO_HEIGHT 5
-static const char *LOGO[LOGO_HEIGHT] = {
-    "AAA BBB CCC DD  EEE FFF",
-    " A  B    C  D D  E  F  ",
-    " A  BBB  C  DD   E  FFF",
-    " A  B    C  D D  E    F",
-    " A  BBB  C  D D EEE FFF",
+constexpr std::array<const char *, 5> LOGO = {
+    "AAA           D D   E  ",
+    "A    B   C   D D D  E  ",
+    "A   BBB CCC  D   D  E  ",
+    "A    B   C    D D      ",
+    "AAA            D    E  ",
 };
 
 #define NUM_TILES (BORDER + 1)
@@ -368,8 +370,8 @@ static bool rotate(bool right) {
 }
 
 static void generate_sprites() {
-    for (enum Tile t = 0; t < NUM_TILES; t++) {
-        if (t == NONE) {
+    for (u8 t = 0; t < NUM_TILES; t++) {
+        if (Tile(t) == NONE) {
             continue;
         }
 
@@ -421,7 +423,7 @@ static void render_board() {
     for (size_t y = 0; y < BOARD_HEIGHT; y++) {
         for (size_t x = 0; x < BOARD_WIDTH; x++) {
             u8 data = state.board[y][x];
-            enum Tile tile = data & TILE_MASK;
+            auto tile = Tile(data & TILE_MASK);
 
             size_t xs = BOARD_X + (x * TILE_SIZE),
                    ys = BOARD_Y + (y * TILE_SIZE);
@@ -662,10 +664,10 @@ void render_menu() {
 
     for (i32 x = -1; x < (i32) logo_width + 1; x++) {
         render_tile(BORDER, logo_x + (x * TILE_SIZE), logo_y - (TILE_SIZE * 2));
-        render_tile(BORDER, logo_x + (x * TILE_SIZE), logo_y + (TILE_SIZE * (1 + LOGO_HEIGHT)));
+        render_tile(BORDER, logo_x + (x * TILE_SIZE), logo_y + (TILE_SIZE * (1 + std::size(LOGO))));
     }
 
-    for (size_t y = 0; y < LOGO_HEIGHT; y++) {
+    for (size_t y = 0; y < std::size(LOGO); y++) {
         for (size_t x = 0; x < logo_width; x++) {
             char c = LOGO[y][x];
 
@@ -674,7 +676,7 @@ void render_menu() {
             }
 
             render_tile(
-                GREEN + ((((state.frames / 10) + (6 - (c - 'A'))) / 6) % 8),
+                Tile(GREEN + ((((state.frames / 10) + (6 - (c - 'A'))) / 6) % 8)),
                 logo_x + (x * TILE_SIZE),
                 logo_y + (y * TILE_SIZE)
             );
@@ -685,14 +687,14 @@ void render_menu() {
     font_str_doubled(
         play,
         (SCREEN_WIDTH - font_width(play)) / 2,
-        logo_y + ((LOGO_HEIGHT + 6) * TILE_SIZE),
+        logo_y + ((std::size(LOGO) + 6) * TILE_SIZE),
         (state.frames / 6) % 2 == 0 ?
             COLOR(6, 6, 2) :
             COLOR(7, 7, 3)
     );
 }
 
-void _main(u32 magic) {
+extern "C" void _main(u32 magic) {
     idt_init();
     isr_init();
     fpu_init();

@@ -3,6 +3,10 @@
 
 #include "util.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define NUM_NOTES 8
 
 #define NUM_OCTAVES 7
@@ -46,5 +50,9 @@ void sound_note(u8 index, u8 octave, u8 note);
 void sound_master(u8 v);
 void sound_volume(u8 index, u8 v);
 void sound_wave(u8 index, u8 wave);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

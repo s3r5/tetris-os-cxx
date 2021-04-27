@@ -3,6 +3,10 @@
 
 #include "util.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define E 2.71828
 #define PI 3.14159265358979323846264338327950
 
@@ -11,5 +15,9 @@ f64 fabs(f64 x);
 f64 sin(f64 x);
 f64 cos(f64 x);
 f64 pow(f64 x, f64 y);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

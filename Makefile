@@ -2,10 +2,12 @@ UNAME := $(shell uname)
 
 ifeq ($(UNAME),Linux)
 	CC=gcc -elf_i386
+	CXX=g++ -elf_i386
 	AS=as --32
 	LD=ld -m elf_i386
 else
 	CC=i386-elf-gcc
+	CXX=i386-elf-g++
 	AS=i386-elf-as
 	LD=i386-elf-ld
 endif
@@ -15,6 +17,10 @@ CCFLAGS=-m32 -std=c11 -O2 -g -Wall -Wextra -Wpedantic -Wstrict-aliasing
 CCFLAGS+=-Wno-pointer-arith -Wno-unused-parameter
 CCFLAGS+=-nostdlib -nostdinc -ffreestanding -fno-pie -fno-stack-protector
 CCFLAGS+=-fno-builtin-function -fno-builtin
+CXXFLAGS=-m32 -std=c++2a -O2 -g -Wall -Wextra -Wpedantic -Wstrict-aliasing
+CXXFLAGS+=-Wno-pointer-arith -Wno-unused-parameter
+CXXFLAGS+=-lstdc++ -ffreestanding -fno-pie -fno-stack-protector
+CXXFLAGS+=-fno-rtti -fno-exceptions
 ASFLAGS=
 LDFLAGS=
 
@@ -24,8 +30,9 @@ BOOTSECT_SRCS=\
 BOOTSECT_OBJS=$(BOOTSECT_SRCS:.S=.o)
 
 KERNEL_C_SRCS=$(wildcard src/*.c)
+KERNEL_CXX_SRCS=$(wildcard src/*.cpp)
 KERNEL_S_SRCS=$(filter-out $(BOOTSECT_SRCS), $(wildcard src/*.S))
-KERNEL_OBJS=$(KERNEL_C_SRCS:.c=.o) $(KERNEL_S_SRCS:.S=.o)
+KERNEL_OBJS=$(KERNEL_C_SRCS:.c=.o) $(KERNEL_CXX_SRCS:.cpp=.o) $(KERNEL_S_SRCS:.S=.o)
 
 BOOTSECT=bootsect.bin
 KERNEL=kernel.bin
@@ -41,6 +48,9 @@ clean:
 
 %.o: %.c
 	$(CC) -o $@ -c $< $(GFLAGS) $(CCFLAGS)
+
+%.o: %.cpp
+	$(CXX) -o $@ -c $< $(GFLAGS) $(CXXFLAGS)
 
 %.o: %.S
 	$(AS) -o $@ -c $< $(GFLAGS) $(ASFLAGS)

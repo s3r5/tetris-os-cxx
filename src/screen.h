@@ -3,6 +3,10 @@
 
 #include "util.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 #define SCREEN_SIZE (SCREEN_WIDTH * SCREEN_HEIGHT)
@@ -49,5 +53,9 @@ extern u8 _sback;
 void screen_swap();
 void screen_clear(u8 color);
 void screen_init();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

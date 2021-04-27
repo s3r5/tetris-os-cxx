@@ -3,6 +3,10 @@
 
 #include "util.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // TODO: some of this it 100% wrong lmao
 #define KEY_NULL 0
 #define KEY_ESC 27
@@ -83,5 +87,9 @@ extern struct Keyboard keyboard;
 #define keyboard_char(_c) (keyboard.chars[(u8) (_c)])
 
 void keyboard_init();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

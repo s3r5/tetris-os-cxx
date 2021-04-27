@@ -4,6 +4,10 @@
 #include "util.h"
 #include "screen.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define font_width(_s) (strlen((_s)) * 8)
 #define font_height() (8)
 #define font_str_doubled(_s, _x, _y, _c) do {\
@@ -17,5 +21,9 @@
 
 void font_char(char c, size_t x, size_t y, u8 color);
 void font_str(const char *s, size_t x, size_t y, u8 color);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
